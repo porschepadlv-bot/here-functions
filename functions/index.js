@@ -10,7 +10,11 @@ apiKey: process.env.OPENAI_API_KEY,
 
 app.post("/reply", async (req, res) => {
 try {
-const { message = "", mode = "flirty" } = req.body;
+const message = req.body.message || "";
+const mode = req.body.mode || "flirty";
+
+console.log("FULL BODY:", req.body);
+console.log("MODE RECEIVED:", mode);
 console.log("MODE RECEIVED:", mode);
 if (mode === "funny") {
 return res.json({
