@@ -16,36 +16,38 @@ if (!message.trim()) {
 return res.json({ replies: [] });
 }
 
-const tonePrompt = {
-flirty: "confident, playful, slightly teasing, attraction-building",
-funny: "witty, playful, slightly sarcastic, light humor, not emotional",
-polite: "calm, respectful, emotionally mature",
-direct: "confident, bold, straightforward, no fluff"
-};
-
-const prompt = `
-You are generating text message replies.
+const completion = await openai.chat.completions.create({
+model: "gpt-4.1-mini",
+temperature: 1.1,
+messages: [
+{
+role: "system",
+content: `You write text-message replies.
 
 STRICT RULES:
 - Match the tone EXACTLY
-- Do NOT default to polite or emotional unless told
+- DO NOT sound polite or emotional unless tone says so
+- Funny = witty, playful, slightly sarcastic, confident
+- Flirty = bold, playful, attraction-building
+- Direct = blunt, confident, short
+- Polite = calm, respectful, emotionally mature
 - Keep replies SHORT (1–2 lines max)
-- Make them sound like real texting
-- No explanations
+- Exactly 3 replies
+- Each reply on its own line
+- No numbering
+- No quotes
+- Sound like real texting, not therapy`
+},
+{
+role: "user",
+content: `Tone: ${mode}
 
-User message:
-"${message}"
+Message:
+${message}
 
-Tone:
-${tonePrompt[mode] || tonePrompt.flirty}
-
-Give EXACTLY 3 replies.
-Each reply on a new line.
-`;
-const completion = await openai.chat.completions.create({
-model: "gpt-4.1-mini",
-messages: [{ role: "user", content: prompt }],
-temperature: 0.9,
+Write 3 replies now.`
+}
+]
 });
 
 const text = completion.choices[0].message.content;
