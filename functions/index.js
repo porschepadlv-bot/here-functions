@@ -34,14 +34,18 @@ Keep responses natural, human, and text-message style.
 `;
 
 const completion = await openai.chat.completions.create({
-model: "gpt-4o-mini",
+model: "gpt-4.1-mini",
 messages: [{ role: "user", content: prompt }],
 temperature: 0.9,
 });
 
 const text = completion.choices[0].message.content;
 
-const replies = text.split("\n").filter(r => r.trim()).slice(0, 3);
+const replies = text
+.split("\n")
+.map(r => r.replace(/^[0-9.\-\)\s]+/, "").trim())
+.filter(r => r.length > 0)
+.slice(0, 3);
 
 res.json({ replies });
 
