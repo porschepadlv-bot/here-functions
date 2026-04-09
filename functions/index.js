@@ -11,6 +11,15 @@ apiKey: process.env.OPENAI_API_KEY,
 app.post("/reply", async (req, res) => {
 try {
 const { message = "", mode = "flirty" } = req.body;
+if (mode === "funny") {
+return res.json({
+replies: [
+"FUNNY TEST 1",
+"FUNNY TEST 2",
+"FUNNY TEST 3"
+]
+});
+}
 
 if (!message.trim()) {
 return res.json({ replies: [] });
